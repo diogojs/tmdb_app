@@ -2,27 +2,25 @@ package com.arctouch.codechallenge.splash
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.api.TmdbApi
-import com.arctouch.codechallenge.base.BaseActivity
-import com.arctouch.codechallenge.data.Cache
+import com.arctouch.codechallenge.data.source.MoviesDataSource
 import com.arctouch.codechallenge.home.HomeActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.arctouch.codechallenge.model.Genre
+import com.arctouch.codechallenge.util.Injection
 
-class SplashActivity : BaseActivity() {
+class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_activity)
 
-        api.genres(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Cache.cacheGenres(it.genres)
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
-            }
+        Injection.provideMoviesRepository()
+            .getGenres(object : MoviesDataSource.LoadGenresCallback {
+                override fun onGenresLoaded(genres: List<Genre>) {
+                    startActivity(Intent(this@SplashActivity, HomeActivity::class.java))
+                    finish()
+                }
+            })
     }
 }
