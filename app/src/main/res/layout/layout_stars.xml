@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutStars"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="124dp"
+    android:minHeight="24dp"
+    android:padding="@dimen/stars_pad"
+    android:orientation="horizontal"
+    android:background="@drawable/round_corner">
+
+    <android.support.v7.widget.AppCompatRatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        style="?android:ratingBarStyleSmall"
+        android:numStars="5"
+        android:stepSize="0.5"
+        android:rating="2"
+        android:isIndicator="true"/>
+
+    <TextView
+        android:id="@+id/tvRate"
+        style="@style/AppTheme.TextInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/section_inner_pad"
+        android:layout_toEndOf="@id/ratingBar"
+        android:layout_alignBottom="@id/ratingBar"
+        tools:text="4.5 / 5" />
+
+</LinearLayout>

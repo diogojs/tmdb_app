@@ -2,19 +2,16 @@ package com.arctouch.codechallenge.detail
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.base.BasePresenter
-import com.arctouch.codechallenge.home.HomeContract
 import com.arctouch.codechallenge.model.Movie
-import com.arctouch.codechallenge.util.Injection
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.detail_activity.*
-import kotlinx.android.synthetic.main.movie_item.view.*
+import kotlinx.android.synthetic.main.layout_stars.*
 
 class DetailActivity : AppCompatActivity(), DetailContract.View {
     companion object {

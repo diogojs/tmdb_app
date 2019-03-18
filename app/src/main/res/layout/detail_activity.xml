@@ -75,56 +75,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ivPoster"
-                    android:layout_marginTop="@dimen/section_inner_pad"
+                    android:layout_marginTop="@dimen/section_padding"
                     android:layout_marginBottom="@dimen/section_inner_pad"
                     tools:text="@string/placeholder_overview" />
 
-                <LinearLayout
-                    android:id="@+id/layoutStars"
+                <include layout="@layout/layout_stars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="124dp"
-                    android:minHeight="24dp"
                     android:layout_below="@id/tvOverview"
-                    android:layout_marginTop="@dimen/section_inner_pad"
-                    android:padding="@dimen/stars_pad"
-                    android:orientation="horizontal"
-                    android:background="@drawable/round_corner">
-
-                    <android.support.v7.widget.AppCompatRatingBar
-                        android:id="@+id/ratingBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        style="?android:ratingBarStyleSmall"
-                        android:numStars="5"
-                        android:stepSize="0.5"
-                        android:rating="2"
-                        android:isIndicator="true"/>
-
-                    <TextView
-                        android:id="@+id/tvRate"
-                        style="@style/AppTheme.TextInfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/section_inner_pad"
-                        android:layout_toEndOf="@id/ratingBar"
-                        android:layout_alignBottom="@id/ratingBar"
-                        tools:text="4.5 / 5" />
-
-                </LinearLayout>
+                    android:layout_marginTop="@dimen/section_inner_pad" />
 
             </RelativeLayout>
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                tools:visibility="gone" />
 
         </RelativeLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:visibility="gone" />
 
 </LinearLayout>

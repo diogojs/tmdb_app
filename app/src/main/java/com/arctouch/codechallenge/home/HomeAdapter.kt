@@ -9,6 +9,7 @@ import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.MovieImageUrlBuilder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.layout_stars.view.*
 import kotlinx.android.synthetic.main.movie_item.view.*
 
 class HomeAdapter(
@@ -21,7 +22,9 @@ class HomeAdapter(
         fun bind(movie: Movie) {
             itemView.titleTextView.text = movie.title
             itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
-            itemView.releaseDateTextView.text = movie.releaseDate
+            itemView.releaseDateTextView.text = movie.releaseDate?.split("-")?.get(0)
+            itemView.ratingBar.rating = movie.rate/2
+            itemView.tvRate.text = itemView.context.getString(R.string.movie_rate, movie.rate)
             itemView.setOnClickListener { itemListener.onMovieClick(movie) }
 
             Glide.with(itemView)
