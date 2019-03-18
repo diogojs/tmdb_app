@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.base.BasePresenter
 import com.arctouch.codechallenge.detail.DetailActivity
+import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
 import kotlinx.android.synthetic.main.home_activity.*
 
@@ -36,6 +37,7 @@ class HomeActivity :
     }
 
     override fun showMovies(movies: List<Movie>) {
+        tvError.visibility = View.GONE
         recyclerView.adapter = HomeAdapter(movies, this)
         recyclerView.addOnScrollListener(presenter.paginationController)
     }
@@ -46,10 +48,13 @@ class HomeActivity :
 
     override fun showLoadingMoviesError() {
         Toast.makeText(baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
+        showNoMovies()
     }
 
     override fun showNoMovies() {
-        Toast.makeText(baseContext, "There is no movie with this filter", Toast.LENGTH_LONG).show()
+        setLoadingIndicator(false)
+        tvError.visibility = View.VISIBLE
+        tvError.text = getString(R.string.no_movies_found)
     }
 
     override fun onMovieClick(item: Movie) {
