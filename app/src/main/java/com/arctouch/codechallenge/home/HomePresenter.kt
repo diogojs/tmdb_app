@@ -1,16 +1,19 @@
 package com.arctouch.codechallenge.home
 
+import android.content.Intent
+import android.support.v7.app.AppCompatActivity
 import com.arctouch.codechallenge.data.source.MoviesDataSource
 import com.arctouch.codechallenge.data.source.MoviesRepository
 import com.arctouch.codechallenge.model.Movie
+import com.arctouch.codechallenge.util.Injection
 
 class HomePresenter(
-    private val moviesRepository: MoviesRepository,
     private val view: HomeContract.View
-): HomeContract.Presenter,
+) : HomeContract.Presenter,
     MoviesDataSource.LoadMoviesCallback {
 
     private var firstLoad = true
+    override val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
 
     override fun start() {
         loadMovies(false)
@@ -23,10 +26,6 @@ class HomePresenter(
 
         moviesRepository.getMovies(this)
         firstLoad = false
-    }
-
-    override fun openMovieDetails(requestedMovie: Movie) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onMoviesLoaded(movies: List<Movie>) {

@@ -1,4 +1,10 @@
 <resources>
-    <string name="app_name">Code Challenge</string>
+    <string name="app_name">MovieDB Challenge</string>
     <string name="movie_and_genres">%s - %s</string>
+    <string name="description_poster">Movie poster</string>
+    <string name="placeholder_overview">Framed in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison, where he puts his accounting skills to work for an amoral warden. During his long stretch in prison, Dufresne comes to be admired by the other inmates - including an older prisoner named Red - for his integrity and unquenchable sense of hope.</string>
+    <string name="basic_info">%s • %s</string>
+    <string name="movie_rate">%.1f / 10</string>
+
+    <string name="network_error">Network error. Check your connection.</string>
 </resources>

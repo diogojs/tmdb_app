@@ -19,7 +19,5 @@ interface HomeContract {
     interface Presenter : BasePresenter {
 
         fun loadMovies(forceUpdate: Boolean)
-
-        fun openMovieDetails(requestedMovie: Movie)
     }
 }

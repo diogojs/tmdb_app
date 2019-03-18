@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="section_padding">16dp</dimen>
+    <dimen name="section_inner_pad">8dp</dimen>
+    <dimen name="stars_pad">6dp</dimen>
+</resources>

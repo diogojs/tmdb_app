@@ -18,7 +18,7 @@ class MoviesRepository private constructor(
         }
     }
 
-    var cachedMovies: HashMap<Int, Movie> = HashMap()
+    var cachedMovies: HashMap<Long, Movie> = HashMap()
     var cacheIsDirty: Boolean = false
 
     override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback) {
@@ -76,7 +76,11 @@ class MoviesRepository private constructor(
     }
 
     override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (Cache.movie?.id == movieId) {
+            callback.onMovieLoaded(Cache.movie!!)
+        } else {
+            moviesRemoteDataSource.getMovie(movieId, callback)
+        }
     }
 
     fun refreshMovies() {
