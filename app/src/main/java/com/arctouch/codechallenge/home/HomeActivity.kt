@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.arctouch.codechallenge.R
+import com.arctouch.codechallenge.base.BasePresenter
 import com.arctouch.codechallenge.detail.DetailActivity
 import com.arctouch.codechallenge.model.Movie
 import kotlinx.android.synthetic.main.home_activity.*
@@ -17,9 +17,9 @@ class HomeActivity :
     HomeContract.View,
     HomeAdapter.MovieClickListener {
 
-    override lateinit var presenter: HomeContract.Presenter
+    override lateinit var presenter: BasePresenter
     private val layoutManager by lazy { LinearLayoutManager(this) }
-    private val rvOnScrollListener = PaginationController(this, layoutManager)
+    //private val rvOnScrollListener = PaginationController(this, layoutManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,9 @@ class HomeActivity :
     }
 
     override fun showMovies(movies: List<Movie>) {
-        recyclerView.adapter = HomeAdapter(movies as ArrayList<Movie>, this)
+        /*(recyclerView.adapter as HomeAdapter).addMovies(movies)
+        recyclerView.addOnScrollListener(rvOnScrollListener)*/
+        recyclerView.adapter = HomeAdapter(movies, this)
     }
 
     fun showMoreMovies(movies: List<Movie>) {

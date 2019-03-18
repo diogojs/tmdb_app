@@ -23,14 +23,14 @@ object MoviesRemoteSource: MoviesDataSource {
         api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
+            .subscribe( {
                     val moviesWithGenres = it.results.map { movie ->
                         movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
-                }
+                    }
                     Cache.cacheMovies(moviesWithGenres)
                     callback.onMoviesLoaded(Cache.movies)
-            }, { callback.onDataNotAvailable() })
+            },
+                { callback.onDataNotAvailable() })
     }
 
     override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
@@ -51,6 +51,7 @@ object MoviesRemoteSource: MoviesDataSource {
             .subscribe( {
                 Cache.cacheGenres(it.genres)
                 callback.onGenresLoaded(Cache.genres)
-            }, { callback.onDataNotAvailable() })
+            },
+                { callback.onDataNotAvailable() })
     }
 }

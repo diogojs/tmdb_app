@@ -19,8 +19,6 @@ class MoviesRepository private constructor(
         }
     }
 
-    var cachedMovies: HashMap<Long, Movie> = HashMap()
-
     override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
         if (Cache.movies.isNotEmpty() && !cacheIsDirty) {
             callback.onMoviesLoaded(Cache.movies)
@@ -50,7 +48,7 @@ class MoviesRepository private constructor(
         moviesRemoteDataSource.getMovies(object : MoviesDataSource.LoadMoviesCallback {
             override fun onMoviesLoaded(movies: List<Movie>) {
                 moviesLocalDataSource.refreshMovies(movies)
-                callback.onMoviesLoaded(ArrayList(cachedMovies.values))
+                callback.onMoviesLoaded(Cache.movies)
             }
 
             override fun onDataNotAvailable() {

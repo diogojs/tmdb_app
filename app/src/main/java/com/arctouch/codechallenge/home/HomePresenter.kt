@@ -1,25 +1,44 @@
 package com.arctouch.codechallenge.home
 
+import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
+import com.arctouch.codechallenge.R
+import com.arctouch.codechallenge.base.BasePresenter
 import com.arctouch.codechallenge.data.source.MoviesDataSource
 import com.arctouch.codechallenge.data.source.MoviesRepository
+import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.Injection
 
 class HomePresenter(
     private val view: HomeContract.View
-) : HomeContract.Presenter,
+) : BasePresenter,
     MoviesDataSource.LoadMoviesCallback {
 
     private var firstLoad = true
     override val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
 
     override fun start() {
+        view.setLoadingIndicator(true)
+        loadGenres()
         loadMovies(false)
     }
 
-    override fun loadMovies(forceUpdate: Boolean) {
-        view.setLoadingIndicator(true)
+    private fun loadGenres() {
+        moviesRepository.getGenres(object : MoviesDataSource.LoadGenresCallback {
+            override fun onGenresLoaded(genres: List<Genre>) {
+                // does nothing
+            }
 
+            override fun onDataNotAvailable() {
+                Toast.makeText((view as AppCompatActivity).baseContext, R.string.network_error, Toast.LENGTH_LONG)
+                    .show()
+            }
+
+        })
+    }
+
+    private fun loadMovies(forceUpdate: Boolean) {
         if (forceUpdate || firstLoad) moviesRepository.refreshMovies()
 
         moviesRepository.getMovies(this)
@@ -40,7 +59,4 @@ class HomePresenter(
         view.showLoadingMoviesError()
     }
 
-    override fun loadMoreMovies() {
-
-    }
 }

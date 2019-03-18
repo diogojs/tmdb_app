@@ -18,10 +18,9 @@ class PaginationController(
 
     companion object {
         const val PAGE_SIZE: Int = 20
-        const val KEY_TRANSITION: String = "KEY_TRANSITION"
     }
 
-    val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
+    private val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
 
     private var isLoading: Boolean = true
     private var isLastPage: Boolean = false

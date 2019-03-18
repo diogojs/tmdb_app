@@ -12,7 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.movie_item.view.*
 
 class HomeAdapter(
-    private val movies: ArrayList<Movie>,
+    private val movies: List<Movie>,
     private val itemListener: MovieClickListener
 ) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
@@ -44,8 +44,8 @@ class HomeAdapter(
         movies.forEach { add(it) }
     }
 
-    fun add(movie: Movie) {
-        movies.add(movie)
+    private fun add(movie: Movie) {
+        (movies as ArrayList).add(movie)
         notifyItemInserted(movies.size - 1)
     }
 

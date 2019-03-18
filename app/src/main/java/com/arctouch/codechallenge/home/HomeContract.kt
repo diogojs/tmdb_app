@@ -5,7 +5,7 @@ import com.arctouch.codechallenge.base.BaseView
 import com.arctouch.codechallenge.model.Movie
 
 interface HomeContract {
-    interface View : BaseView<Presenter> {
+    interface View : BaseView<BasePresenter> {
 
         fun setLoadingIndicator(active: Boolean)
 
@@ -14,12 +14,5 @@ interface HomeContract {
         fun showLoadingMoviesError()
 
         fun showNoMovies()
-    }
-
-    interface Presenter : BasePresenter {
-
-        fun loadMovies(forceUpdate: Boolean)
-
-        fun loadMoreMovies()
     }
 }
