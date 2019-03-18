@@ -1,8 +1,8 @@
 package com.arctouch.codechallenge.detail
 
 import com.arctouch.codechallenge.base.BasePresenter
-import com.arctouch.codechallenge.data.source.MoviesDataSource
-import com.arctouch.codechallenge.data.source.MoviesRepository
+import com.arctouch.codechallenge.data.MoviesDataSource
+import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.Injection
 

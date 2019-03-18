@@ -17,9 +17,7 @@ class HomeActivity :
     HomeContract.View,
     HomeAdapter.MovieClickListener {
 
-    override lateinit var presenter: BasePresenter
-    private val layoutManager by lazy { LinearLayoutManager(this) }
-    //private val rvOnScrollListener = PaginationController(this, layoutManager)
+    override lateinit var presenter: HomeContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +36,11 @@ class HomeActivity :
     }
 
     override fun showMovies(movies: List<Movie>) {
-        /*(recyclerView.adapter as HomeAdapter).addMovies(movies)
-        recyclerView.addOnScrollListener(rvOnScrollListener)*/
         recyclerView.adapter = HomeAdapter(movies, this)
+        recyclerView.addOnScrollListener(presenter.paginationController)
     }
 
-    fun showMoreMovies(movies: List<Movie>) {
+    override fun showMoreMovies(movies: List<Movie>) {
         (recyclerView.adapter as HomeAdapter).addMovies(movies)
     }
 

@@ -3,20 +3,20 @@ package com.arctouch.codechallenge.home
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.base.BasePresenter
-import com.arctouch.codechallenge.data.source.MoviesDataSource
-import com.arctouch.codechallenge.data.source.MoviesRepository
+import com.arctouch.codechallenge.data.MoviesDataSource
+import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.Injection
 
 class HomePresenter(
     private val view: HomeContract.View
-) : BasePresenter,
+) : HomeContract.Presenter,
     MoviesDataSource.LoadMoviesCallback {
 
     private var firstLoad = true
     override val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
+    override var paginationController = PaginationController(view)
 
     override fun start() {
         view.setLoadingIndicator(true)
@@ -47,6 +47,7 @@ class HomePresenter(
 
     override fun onMoviesLoaded(movies: List<Movie>) {
         view.setLoadingIndicator(false)
+        paginationController.isLoading = false
 
         if (movies.isEmpty()) {
             view.showNoMovies()

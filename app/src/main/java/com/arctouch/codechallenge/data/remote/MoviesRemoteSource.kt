@@ -1,8 +1,9 @@
-package com.arctouch.codechallenge.data.source.remote
+package com.arctouch.codechallenge.data.remote
 
+import android.annotation.SuppressLint
 import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.data.Cache
-import com.arctouch.codechallenge.data.source.MoviesDataSource
+import com.arctouch.codechallenge.data.MoviesDataSource
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
 import okhttp3.OkHttpClient
@@ -19,13 +20,14 @@ object MoviesRemoteSource: MoviesDataSource {
                 .build()
                 .create(TmdbApi::class.java)
 
+    @SuppressLint("CheckResult")
     override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
         api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
                     val moviesWithGenres = it.results.map { movie ->
-                        movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
+                        movie.copy(genres = Cache.genres.filter { g -> movie.genreIds?.contains(g.id) == true })
                     }
                     Cache.cacheMovies(moviesWithGenres)
                     callback.onMoviesLoaded(Cache.movies)

@@ -5,13 +5,13 @@ import com.arctouch.codechallenge.model.Movie
 
 object Cache {
 
-    var genres = listOf<Genre>()
+    @JvmStatic var genres = listOf<Genre>()
 
-    var movie: Movie? = null
+    @JvmStatic var movie: Movie? = null
 
-    var movies = listOf<Movie>()
+    @JvmStatic var movies = listOf<Movie>()
 
-    var cacheIsDirty: Boolean = false
+    @JvmStatic var cacheIsDirty: Boolean = false
 
     fun cacheGenres(genres: List<Genre>) {
         this.genres = genres

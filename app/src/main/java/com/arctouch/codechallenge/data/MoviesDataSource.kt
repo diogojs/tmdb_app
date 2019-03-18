@@ -1,4 +1,4 @@
-package com.arctouch.codechallenge.data.source
+package com.arctouch.codechallenge.data
 
 import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie

@@ -4,15 +4,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.data.source.MoviesDataSource
-import com.arctouch.codechallenge.data.source.MoviesRepository
+import com.arctouch.codechallenge.data.MoviesDataSource
+import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.Injection
 
 
 class PaginationController(
-    private val activity: HomeActivity,
-    private val layoutManager: LinearLayoutManager
+    private val view: HomeContract.View
 ): RecyclerView.OnScrollListener(),
     MoviesDataSource.LoadMoviesCallback {
 
@@ -22,15 +21,16 @@ class PaginationController(
 
     private val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
 
-    private var isLoading: Boolean = true
+    var isLoading: Boolean = true
     private var isLastPage: Boolean = false
-    private var currentPage: Int = 1
+    private var currentPage: Long = 1
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val visibleItem = layoutManager.childCount
         val totalItem = layoutManager.itemCount
-        var firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
         if (!isLoading && !isLastPage) {
             if ((visibleItem + firstVisiblePosition >= totalItem)
                 && firstVisiblePosition >= 0
@@ -45,14 +45,14 @@ class PaginationController(
 
         currentPage += 1
 
-        moviesRepository.getMovies(this)
+        moviesRepository.getMovies(this, currentPage)
     }
 
     override fun onMoviesLoaded(movies: List<Movie>) {
-        activity.setLoadingIndicator(false)
+        view.setLoadingIndicator(false)
         isLoading = false
 
-        activity.showMoreMovies(movies)
+        view.showMoreMovies(movies)
 
         if (movies.size < PAGE_SIZE) {
             isLastPage = true
@@ -60,6 +60,6 @@ class PaginationController(
     }
 
     override fun onDataNotAvailable() {
-        Toast.makeText(activity, R.string.load_error, Toast.LENGTH_LONG).show()
+        Toast.makeText((view as HomeActivity).baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
     }
 }
