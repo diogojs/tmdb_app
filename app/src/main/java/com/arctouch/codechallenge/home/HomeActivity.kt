@@ -3,7 +3,10 @@ package com.arctouch.codechallenge.home
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.Toast
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.detail.DetailActivity
 import com.arctouch.codechallenge.model.Movie
@@ -15,6 +18,8 @@ class HomeActivity :
     HomeAdapter.MovieClickListener {
 
     override lateinit var presenter: HomeContract.Presenter
+    private val layoutManager by lazy { LinearLayoutManager(this) }
+    private val rvOnScrollListener = PaginationController(this, layoutManager)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,15 +38,19 @@ class HomeActivity :
     }
 
     override fun showMovies(movies: List<Movie>) {
-        recyclerView.adapter = HomeAdapter(movies, this)
+        recyclerView.adapter = HomeAdapter(movies as ArrayList<Movie>, this)
+    }
+
+    fun showMoreMovies(movies: List<Movie>) {
+        (recyclerView.adapter as HomeAdapter).addMovies(movies)
     }
 
     override fun showLoadingMoviesError() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
     }
 
     override fun showNoMovies() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(baseContext, "There is no movie with this filter", Toast.LENGTH_LONG).show()
     }
 
     override fun onMovieClick(item: Movie) {

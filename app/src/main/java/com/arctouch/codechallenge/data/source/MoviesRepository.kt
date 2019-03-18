@@ -1,6 +1,7 @@
 package com.arctouch.codechallenge.data.source
 
 import com.arctouch.codechallenge.data.Cache
+import com.arctouch.codechallenge.data.Cache.cacheIsDirty
 import com.arctouch.codechallenge.data.source.local.MoviesLocalSource
 import com.arctouch.codechallenge.model.Movie
 
@@ -19,11 +20,10 @@ class MoviesRepository private constructor(
     }
 
     var cachedMovies: HashMap<Long, Movie> = HashMap()
-    var cacheIsDirty: Boolean = false
 
-    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback) {
-        if (cachedMovies.isNotEmpty() && !cacheIsDirty) {
-            callback.onMoviesLoaded(ArrayList(cachedMovies.values))
+    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
+        if (Cache.movies.isNotEmpty() && !cacheIsDirty) {
+            callback.onMoviesLoaded(Cache.movies)
             return
         }
 
@@ -37,7 +37,6 @@ class MoviesRepository private constructor(
     private fun getMoviesFromLocalSource(callback: MoviesDataSource.LoadMoviesCallback) {
         moviesLocalDataSource.getMovies(object : MoviesDataSource.LoadMoviesCallback {
             override fun onMoviesLoaded(movies: List<Movie>) {
-                refreshCache(movies)
                 callback.onMoviesLoaded(movies)
             }
 
@@ -50,8 +49,7 @@ class MoviesRepository private constructor(
     private fun getMoviesFromRemoteSource(callback: MoviesDataSource.LoadMoviesCallback) {
         moviesRemoteDataSource.getMovies(object : MoviesDataSource.LoadMoviesCallback {
             override fun onMoviesLoaded(movies: List<Movie>) {
-                refreshCache(movies)
-                refreshLocalSource(movies)
+                moviesLocalDataSource.refreshMovies(movies)
                 callback.onMoviesLoaded(ArrayList(cachedMovies.values))
             }
 
@@ -59,20 +57,6 @@ class MoviesRepository private constructor(
                 callback.onDataNotAvailable()
             }
         })
-    }
-
-    private fun refreshCache(movies: List<Movie>) {
-        cachedMovies.clear()
-        movies.forEach { cachedMovies.put(it.id, it) }
-        cacheIsDirty = false
-    }
-
-    private fun refreshLocalSource(movies: List<Movie>) {
-        moviesLocalDataSource.clear()
-        for (movie in movies) {
-            moviesLocalDataSource.addMovie(movie)
-        }
-
     }
 
     override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {

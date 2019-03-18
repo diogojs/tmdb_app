@@ -1,7 +1,5 @@
 package com.arctouch.codechallenge.home
 
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import com.arctouch.codechallenge.data.source.MoviesDataSource
 import com.arctouch.codechallenge.data.source.MoviesRepository
 import com.arctouch.codechallenge.model.Movie
@@ -40,5 +38,9 @@ class HomePresenter(
 
     override fun onDataNotAvailable() {
         view.showLoadingMoviesError()
+    }
+
+    override fun loadMoreMovies() {
+
     }
 }

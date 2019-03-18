@@ -1,8 +1,5 @@
 package com.arctouch.codechallenge.data.source.remote
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.data.Cache
 import com.arctouch.codechallenge.data.source.MoviesDataSource
@@ -22,8 +19,8 @@ object MoviesRemoteSource: MoviesDataSource {
                 .build()
                 .create(TmdbApi::class.java)
 
-    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback) {
-        api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, 1)
+    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
+        api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -31,7 +28,8 @@ object MoviesRemoteSource: MoviesDataSource {
                     val moviesWithGenres = it.results.map { movie ->
                         movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
                 }
-                callback.onMoviesLoaded(moviesWithGenres)
+                    Cache.cacheMovies(moviesWithGenres)
+                    callback.onMoviesLoaded(Cache.movies)
             }, { callback.onDataNotAvailable() })
     }
 
@@ -40,6 +38,7 @@ object MoviesRemoteSource: MoviesDataSource {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
+                Cache.cacheMovie(it)
                 callback.onMovieLoaded(it)
             },
                 { callback.onDataNotAvailable() })
@@ -53,10 +52,5 @@ object MoviesRemoteSource: MoviesDataSource {
                 Cache.cacheGenres(it.genres)
                 callback.onGenresLoaded(Cache.genres)
             }, { callback.onDataNotAvailable() })
-    }
-
-    private fun displayError(error: Throwable, context: Context) {
-        Log.i("Network Error", "Error while connecting to server", error)
-        Toast.makeText(context.applicationContext, "Error while connecting to server", Toast.LENGTH_LONG).show()
     }
 }

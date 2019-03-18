@@ -1,6 +1,5 @@
 package com.arctouch.codechallenge.data.source
 
-import android.content.Context
 import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
 
@@ -23,7 +22,7 @@ interface MoviesDataSource {
         fun onDataNotAvailable()
     }
 
-    fun getMovies(callback: LoadMoviesCallback)
+    fun getMovies(callback: LoadMoviesCallback, page: Long = 1)
 
     fun getMovie(movieId: Long, callback: GetMovieCallback)
 
