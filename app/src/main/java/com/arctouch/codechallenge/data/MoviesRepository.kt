@@ -38,11 +38,9 @@ class MoviesRepository private constructor(
     }
 
     override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
-        if (Cache.movie?.id == movieId) {
-            callback.onMovieLoaded(Cache.movie!!)
-        } else {
-            moviesRemoteDataSource.getMovie(movieId, callback)
-        }
+        Cache.movie?.let {
+            if (it.id == movieId) callback.onMovieLoaded(it)
+        } ?: moviesRemoteDataSource.getMovie(movieId, callback)
     }
 
     fun refreshMovies() {
