@@ -6,7 +6,7 @@ import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.data.remote.MoviesRemoteSource
 import com.arctouch.codechallenge.model.Movie
 import com.nhaarman.mockitokotlin2.*
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,12 +32,12 @@ class MoviesRepositoryTest {
                 // do nothing
             }
         }
+        whenever(mockedMovie.id).thenReturn(42)
     }
 
     @Test
     fun whenMovieInCache_getMovie_returnsCachedMovie() {
         // Given
-        whenever(mockedMovie.id).thenReturn(42)
         Cache.cacheMovie(mockedMovie)
 
         // When
@@ -50,16 +50,28 @@ class MoviesRepositoryTest {
     }
 
     @Test
-    fun whenCacheEmpty_getMovie_returnsRemoteData() {
+    fun whenCacheEmpty_getMovie_callsRemoteData() {
         // Given
-        whenever(mockedRemoteSource.getMovie(eq(42), any())).then { callback.onMovieLoaded(mockedMovie) }
+        Cache.movie = null
 
         // When
         val repository = MoviesRepository.getInstance(mockedRemoteSource)
         repository.getMovie(42, callback)
 
         // Then
-        assertEquals(myMovie, mockedMovie)
+        verify(mockedRemoteSource).getMovie(any(), any())
+    }
+
+    @Test
+    fun whenAnotherMovieInCache_getMovie_callsRemoteData() {
+        // Given
+        Cache.cacheMovie(mockedMovie)
+
+        // When
+        val repository = MoviesRepository.getInstance(mockedRemoteSource)
+        repository.getMovie(43, callback)
+
+        // Then
         verify(mockedRemoteSource).getMovie(any(), any())
     }
 }

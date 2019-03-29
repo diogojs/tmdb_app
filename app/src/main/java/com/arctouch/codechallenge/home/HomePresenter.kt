@@ -3,6 +3,7 @@ package com.arctouch.codechallenge.home
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.arctouch.codechallenge.R
+import com.arctouch.codechallenge.data.Cache
 import com.arctouch.codechallenge.data.MoviesDataSource
 import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.model.Genre
@@ -27,7 +28,7 @@ class HomePresenter(
     private fun loadGenres() {
         moviesRepository.getGenres(object : MoviesDataSource.LoadGenresCallback {
             override fun onGenresLoaded(genres: List<Genre>) {
-                // does nothing
+                Cache.cacheGenres(genres)
             }
 
             override fun onDataNotAvailable() {

@@ -3,14 +3,17 @@ package com.arctouch.codechallenge.data
 import com.arctouch.codechallenge.model.Movie
 
 class MoviesRepository private constructor(
-    private val moviesRemoteDataSource: MoviesDataSource
-): MoviesDataSource {
+    private var moviesRemoteDataSource: MoviesDataSource
+) : MoviesDataSource {
 
     companion object {
         private var INSTANCE: MoviesRepository? = null
 
         @JvmStatic
         fun getInstance(remoteDataSource: MoviesDataSource): MoviesRepository {
+            INSTANCE?.let {
+                it.apply { moviesRemoteDataSource = remoteDataSource }
+            }
             return INSTANCE
                 ?: MoviesRepository(remoteDataSource).apply { INSTANCE = this }
         }
@@ -38,9 +41,16 @@ class MoviesRepository private constructor(
     }
 
     override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
-        Cache.movie?.let {
-            if (it.id == movieId) callback.onMovieLoaded(it)
-        } ?: moviesRemoteDataSource.getMovie(movieId, callback)
+        if (isMovieCached(Cache.movie, movieId) { callback.onMovieLoaded(it) }) return
+        else moviesRemoteDataSource.getMovie(movieId, callback)
+    }
+
+    private fun isMovieCached(movie: Movie?, id: Long, returnCache: (Movie) -> (Unit)): Boolean {
+        if (movie?.id == id) {
+            returnCache(movie)
+            return true
+        }
+        return false
     }
 
     fun refreshMovies() {
