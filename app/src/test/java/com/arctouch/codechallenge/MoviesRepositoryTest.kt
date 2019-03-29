@@ -21,6 +21,10 @@ class MoviesRepositoryTest {
     private lateinit var callback: MoviesDataSource.GetMovieCallback
     private lateinit var myMovie: Movie
 
+    companion object {
+        const val MOVIE_ID: Long = 42
+    }
+
     @Before
     fun setup() {
         callback = object : MoviesDataSource.GetMovieCallback {
@@ -32,7 +36,7 @@ class MoviesRepositoryTest {
                 // do nothing
             }
         }
-        whenever(mockedMovie.id).thenReturn(42)
+        whenever(mockedMovie.id).thenReturn(MOVIE_ID)
     }
 
     @Test
@@ -42,7 +46,7 @@ class MoviesRepositoryTest {
 
         // When
         val repository = MoviesRepository.getInstance(mockedRemoteSource)
-        repository.getMovie(42, callback)
+        repository.getMovie(MOVIE_ID, callback)
 
         // Then
         assertEquals(myMovie, mockedMovie)
@@ -56,7 +60,7 @@ class MoviesRepositoryTest {
 
         // When
         val repository = MoviesRepository.getInstance(mockedRemoteSource)
-        repository.getMovie(42, callback)
+        repository.getMovie(MOVIE_ID, callback)
 
         // Then
         verify(mockedRemoteSource).getMovie(any(), any())
@@ -69,7 +73,7 @@ class MoviesRepositoryTest {
 
         // When
         val repository = MoviesRepository.getInstance(mockedRemoteSource)
-        repository.getMovie(43, callback)
+        repository.getMovie(MOVIE_ID + 1, callback)
 
         // Then
         verify(mockedRemoteSource).getMovie(any(), any())
