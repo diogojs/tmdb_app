@@ -3,14 +3,13 @@ package com.arctouch.codechallenge.detail
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.base.BasePresenter
 import com.arctouch.codechallenge.model.Movie
-import com.arctouch.codechallenge.util.MovieImageUrlBuilder
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.arctouch.codechallenge.util.ViewUtils.setRating
+import com.arctouch.codechallenge.util.ViewUtils.showBackdropImage
+import com.arctouch.codechallenge.util.ViewUtils.showPosterImage
 import kotlinx.android.synthetic.main.detail_activity.*
 import kotlinx.android.synthetic.main.layout_stars.*
 
@@ -44,24 +43,18 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
     }
 
     override fun fillContent(movie: Movie) {
-        showImage(ivBackdrop, movie.backdropPath)
-        showImage(ivPoster, movie.posterPath)
+        showBackdropImage(ivBackdrop, movie.backdropPath)
+        showPosterImage(ivPoster, movie.posterPath)
 
         tvTitle.text = movie.title
         val genres = movie.genres?.joinToString(separator = ", ") { it.name }
         val release = movie.releaseDate?.split("-")?.get(0)
         tvBasicInfo.text = getString(R.string.basic_info, release, genres)
         tvOverview.text = movie.overview
-        ratingBar.rating = movie.rate/2
-        tvRate.text = getString(R.string.movie_rate, movie.rate)
+        setRating(layoutStars, movie.rate)
     }
 
-    fun showImage(imageView: ImageView, path: String?) {
-        Glide.with(imageView)
-            .load(path?.let { MovieImageUrlBuilder.buildBackdropUrl(it) })
-            .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-            .into(imageView)
-    }
+
 
     override fun showLoadingError() {
         Toast.makeText(baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
