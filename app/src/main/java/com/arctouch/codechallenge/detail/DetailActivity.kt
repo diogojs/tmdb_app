@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.base.BasePresenter
 import com.arctouch.codechallenge.model.Movie
@@ -63,7 +64,7 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
     }
 
     override fun showLoadingError() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
     }
 
     override fun onSupportNavigateUp(): Boolean {
