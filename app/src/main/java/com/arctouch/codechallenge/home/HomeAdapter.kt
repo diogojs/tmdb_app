@@ -6,26 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import com.arctouch.codechallenge.R
 import com.arctouch.codechallenge.model.Movie
-import com.arctouch.codechallenge.util.MovieImageUrlBuilder
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.arctouch.codechallenge.util.ViewUtils.setRating
+import com.arctouch.codechallenge.util.ViewUtils.showPosterImage
+import kotlinx.android.synthetic.main.layout_stars.view.*
 import kotlinx.android.synthetic.main.movie_item.view.*
 
-class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
+class HomeAdapter(
+    private val movies: List<Movie>,
+    private val itemListener: MovieClickListener
+) : RecyclerView.Adapter<HomeAdapter.ViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        private val movieImageUrlBuilder = MovieImageUrlBuilder()
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(movie: Movie) {
             itemView.titleTextView.text = movie.title
             itemView.genresTextView.text = movie.genres?.joinToString(separator = ", ") { it.name }
-            itemView.releaseDateTextView.text = movie.releaseDate
+            itemView.releaseDateTextView.text = movie.releaseDate?.split("-")?.get(0)
+            itemView.setOnClickListener { itemListener.onMovieClick(movie) }
+            setRating(itemView.layoutStars, movie.rate)
 
-            Glide.with(itemView)
-                .load(movie.posterPath?.let { movieImageUrlBuilder.buildPosterUrl(it) })
-                .apply(RequestOptions().placeholder(R.drawable.ic_image_placeholder))
-                .into(itemView.posterImageView)
+            showPosterImage(itemView.posterImageView, movie.posterPath)
         }
     }
 
@@ -37,4 +37,17 @@ class HomeAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<HomeAd
     override fun getItemCount() = movies.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(movies[position])
+
+    fun addMovies(movies: List<Movie>) {
+        movies.forEach { add(it) }
+    }
+
+    private fun add(movie: Movie) {
+        (movies as ArrayList).add(movie)
+        notifyItemInserted(movies.size - 1)
+    }
+
+    interface MovieClickListener {
+        fun onMovieClick(item: Movie)
+    }
 }

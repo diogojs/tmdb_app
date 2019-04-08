@@ -1,30 +1,70 @@
 package com.arctouch.codechallenge.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.arctouch.codechallenge.R
-import com.arctouch.codechallenge.api.TmdbApi
-import com.arctouch.codechallenge.base.BaseActivity
-import com.arctouch.codechallenge.data.Cache
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.arctouch.codechallenge.base.BasePresenter
+import com.arctouch.codechallenge.detail.DetailActivity
+import com.arctouch.codechallenge.model.Genre
+import com.arctouch.codechallenge.model.Movie
 import kotlinx.android.synthetic.main.home_activity.*
 
-class HomeActivity : BaseActivity() {
+class HomeActivity :
+    AppCompatActivity(),
+    HomeContract.View,
+    HomeAdapter.MovieClickListener {
+
+    override lateinit var presenter: HomeContract.Presenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_activity)
 
-        api.upcomingMovies(TmdbApi.API_KEY, TmdbApi.DEFAULT_LANGUAGE, 1, TmdbApi.DEFAULT_REGION)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                val moviesWithGenres = it.results.map { movie ->
-                    movie.copy(genres = Cache.genres.filter { movie.genreIds?.contains(it.id) == true })
-                }
-                recyclerView.adapter = HomeAdapter(moviesWithGenres)
-                progressBar.visibility = View.GONE
-            }
+        presenter = HomePresenter(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        presenter.start()
+    }
+
+    override fun setLoadingIndicator(active: Boolean) {
+        progressBar.visibility = if (active) View.VISIBLE else View.GONE
+    }
+
+    override fun showMovies(movies: List<Movie>) {
+        tvError.visibility = View.GONE
+        recyclerView.adapter = HomeAdapter(movies, this)
+        recyclerView.addOnScrollListener(presenter.paginationController)
+    }
+
+    override fun showMoreMovies(movies: List<Movie>) {
+        (recyclerView.adapter as HomeAdapter).addMovies(movies)
+    }
+
+    override fun showLoadingMoviesError() {
+        Toast.makeText(baseContext, R.string.load_error, Toast.LENGTH_LONG).show()
+        showNoMovies()
+    }
+
+    override fun showNoMovies() {
+        setLoadingIndicator(false)
+        tvError.visibility = View.VISIBLE
+        tvError.text = getString(R.string.no_movies_found)
+    }
+
+    override fun onMovieClick(item: Movie) {
+        val intent = Intent(baseContext, DetailActivity::class.java)
+        intent.putExtra(DetailActivity.MOVIE_ID_KEY, item.id)
+        startActivity(intent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.onStop()
     }
 }
