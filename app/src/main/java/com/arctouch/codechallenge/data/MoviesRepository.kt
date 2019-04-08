@@ -1,6 +1,8 @@
 package com.arctouch.codechallenge.data
 
 import com.arctouch.codechallenge.model.Movie
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
 
 class MoviesRepository private constructor(
     private var moviesRemoteDataSource: MoviesDataSource
@@ -19,16 +21,17 @@ class MoviesRepository private constructor(
         }
     }
 
-    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
-        if (Cache.cacheIsDirty) {
+    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) : Disposable {
+        return if (Cache.cacheIsDirty) {
             getMoviesFromRemoteSource(callback, page)
         } else {
             callback.onMoviesLoaded(Cache.movies)
+            Disposables.empty()
         }
     }
 
-    private fun getMoviesFromRemoteSource(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
-        moviesRemoteDataSource.getMovies(object : MoviesDataSource.LoadMoviesCallback {
+    private fun getMoviesFromRemoteSource(callback: MoviesDataSource.LoadMoviesCallback, page: Long) : Disposable {
+        return moviesRemoteDataSource.getMovies(object : MoviesDataSource.LoadMoviesCallback {
             override fun onMoviesLoaded(movies: List<Movie>) {
                 Cache.cacheMovies(movies)
                 callback.onMoviesLoaded(Cache.movies)
@@ -40,8 +43,8 @@ class MoviesRepository private constructor(
         }, page)
     }
 
-    override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
-        if (isMovieCached(Cache.movie, movieId) { callback.onMovieLoaded(it) }) return
+    override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) : Disposable {
+        return if (isMovieCached(Cache.movie, movieId) { callback.onMovieLoaded(it) }) Disposables.empty()
         else moviesRemoteDataSource.getMovie(movieId, callback)
     }
 
@@ -57,9 +60,10 @@ class MoviesRepository private constructor(
         Cache.cacheIsDirty = true
     }
 
-    override fun getGenres(callback: MoviesDataSource.LoadGenresCallback) {
-        if (Cache.genres.isNotEmpty()) {
+    override fun getGenres(callback: MoviesDataSource.LoadGenresCallback) : Disposable {
+        return if (Cache.genres.isNotEmpty()) {
             callback.onGenresLoaded(Cache.genres)
+            Disposables.empty()
         } else {
             moviesRemoteDataSource.getGenres(callback)
         }

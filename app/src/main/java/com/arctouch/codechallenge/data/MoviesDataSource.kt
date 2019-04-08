@@ -2,6 +2,7 @@ package com.arctouch.codechallenge.data
 
 import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
+import io.reactivex.disposables.Disposable
 
 interface MoviesDataSource {
     interface LoadMoviesCallback {
@@ -22,9 +23,9 @@ interface MoviesDataSource {
         fun onDataNotAvailable()
     }
 
-    fun getMovies(callback: LoadMoviesCallback, page: Long = 1)
+    fun getMovies(callback: LoadMoviesCallback, page: Long = 1) : Disposable
 
-    fun getMovie(movieId: Long, callback: GetMovieCallback)
+    fun getMovie(movieId: Long, callback: GetMovieCallback) : Disposable
 
-    fun getGenres(callback: LoadGenresCallback)
+    fun getGenres(callback: LoadGenresCallback) : Disposable
 }

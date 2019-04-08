@@ -64,4 +64,9 @@ class DetailActivity : AppCompatActivity(), DetailContract.View {
         onBackPressed()
         return true
     }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.onStop()
+    }
 }

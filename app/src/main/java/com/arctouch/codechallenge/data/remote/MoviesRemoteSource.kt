@@ -1,11 +1,11 @@
 package com.arctouch.codechallenge.data.remote
 
-import android.annotation.SuppressLint
 import com.arctouch.codechallenge.api.TmdbApi
 import com.arctouch.codechallenge.data.Cache
 import com.arctouch.codechallenge.data.MoviesDataSource
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -32,9 +32,8 @@ object MoviesRemoteSource: MoviesDataSource {
                 .build()
                 .create(TmdbApi::class.java)
 
-    @SuppressLint("CheckResult")
-    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) {
-        api.upcomingMovies(TmdbApi.DEFAULT_LANGUAGE, page)
+    override fun getMovies(callback: MoviesDataSource.LoadMoviesCallback, page: Long) : Disposable {
+        return api.upcomingMovies(TmdbApi.DEFAULT_LANGUAGE, page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
@@ -47,8 +46,8 @@ object MoviesRemoteSource: MoviesDataSource {
                 { callback.onDataNotAvailable() })
     }
 
-    override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) {
-        api.movie(movieId, TmdbApi.DEFAULT_LANGUAGE)
+    override fun getMovie(movieId: Long, callback: MoviesDataSource.GetMovieCallback) : Disposable {
+        return api.movie(movieId, TmdbApi.DEFAULT_LANGUAGE)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
@@ -58,8 +57,8 @@ object MoviesRemoteSource: MoviesDataSource {
                 { callback.onDataNotAvailable() })
     }
 
-    override fun getGenres(callback: MoviesDataSource.LoadGenresCallback) {
-        api.genres(TmdbApi.DEFAULT_LANGUAGE)
+    override fun getGenres(callback: MoviesDataSource.LoadGenresCallback) : Disposable {
+        return api.genres(TmdbApi.DEFAULT_LANGUAGE)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {

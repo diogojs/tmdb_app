@@ -9,6 +9,7 @@ import com.arctouch.codechallenge.data.MoviesRepository
 import com.arctouch.codechallenge.model.Genre
 import com.arctouch.codechallenge.model.Movie
 import com.arctouch.codechallenge.util.Injection
+import io.reactivex.disposables.CompositeDisposable
 
 class HomePresenter(
     private val view: HomeContract.View
@@ -16,16 +17,19 @@ class HomePresenter(
     MoviesDataSource.LoadMoviesCallback {
 
     private var firstLoad = true
+    private lateinit var compositeDisposable: CompositeDisposable
     override val moviesRepository: MoviesRepository = Injection.provideMoviesRepository()
     override var paginationController = PaginationController(view)
 
     override fun start() {
+        compositeDisposable = CompositeDisposable()
         view.setLoadingIndicator(true)
         loadGenres()
         loadMovies(false)
     }
 
     private fun loadGenres() {
+        compositeDisposable.add(
         moviesRepository.getGenres(object : MoviesDataSource.LoadGenresCallback {
             override fun onGenresLoaded(genres: List<Genre>) {
                 Cache.cacheGenres(genres)
@@ -36,13 +40,13 @@ class HomePresenter(
                     .show()
             }
 
-        })
+        }))
     }
 
     private fun loadMovies(forceUpdate: Boolean) {
         if (forceUpdate || firstLoad) moviesRepository.refreshMovies()
 
-        moviesRepository.getMovies(this)
+        compositeDisposable.add(moviesRepository.getMovies(this))
         firstLoad = false
     }
 
@@ -59,6 +63,10 @@ class HomePresenter(
 
     override fun onDataNotAvailable() {
         view.showLoadingMoviesError()
+    }
+
+    override fun onStop() {
+        compositeDisposable.dispose()
     }
 
 }

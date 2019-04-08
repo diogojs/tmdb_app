@@ -62,4 +62,9 @@ class HomeActivity :
         intent.putExtra(DetailActivity.MOVIE_ID_KEY, item.id)
         startActivity(intent)
     }
+
+    override fun onStop() {
+        super.onStop()
+        presenter.onStop()
+    }
 }
